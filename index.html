@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Redi AR - Demo</title>
+    <!-- A-Frame y MindAR -->
+    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+
+    <style>
+        body { margin: 0; overflow: hidden; font-family: 'Arial', sans-serif; }
+        
+        /* Pantalla de bienvenida */
+        #ui-layer {
+            position: fixed; z-index: 1000; inset: 0;
+            background: #0b1e3d; /* Color profundo del proyecto */
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: #fff8ec; text-align: center; padding: 20px;
+        }
+        
+        button {
+            padding: 15px 40px; font-size: 1.2rem; background: #f97362;
+            color: white; border: none; border-radius: 50px; cursor: pointer;
+            margin-top: 20px; font-weight: bold;
+        }
+
+        #redi-img { width: 200px; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+
+    <!-- Capa de UI -->
+    <div id="ui-layer">
+        <img id="redi-img" src="redi_saluda.png" alt="Redi">
+        <h1>¡Hola! Soy Redi</h1>
+        <p>Apunta al libro para pescar</p>
+        <button id="start-btn">¡VAMOS!</button>
+    </div>
+
+    <!-- Escena AR -->
+    <a-scene 
+        id="ar-scene"
+        mindar-image="imageTargetSrc: ./libro.mind; autoStart: false; uiScanning: no;" 
+        embedded 
+        renderer="colorManagement: true; antialias: true;"
+        vr-mode-ui="enabled: false">
+        
+        <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+
+        <!-- Definimos un target (ejemplo: índice 0) -->
+        <a-entity mindar-image-target="targetIndex: 0" id="target-0">
+            <!-- AQUÍ VAN TUS PECES O CONTENIDO -->
+            <a-box color="red" scale="0.5 0.5 0.5" position="0 0 0"></a-box>
+        </a-entity>
+    </a-scene>
+
+    <script>
+        const startBtn = document.getElementById('start-btn');
+        const uiLayer = document.getElementById('ui-layer');
+        const sceneEl = document.querySelector('a-scene');
+
+        startBtn.addEventListener('click', () => {
+            // Ocultar UI
+            uiLayer.style.display = 'none';
+            // Iniciar MindAR
+            const mindarSystem = sceneEl.systems["mindar-image-system"];
+            mindarSystem.start();
+        });
+
+        // Feedback simple al detectar
+        const target0 = document.getElementById('target-0');
+        target0.addEventListener('targetFound', () => {
+            console.log("¡Target detectado! Mostrando peces...");
+        });
+    </script>
+</body>
+</html>
